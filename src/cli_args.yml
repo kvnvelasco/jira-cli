@@ -1,0 +1,62 @@
+name: jira
+version: "1.0.0"
+author: Kevin Velasco <me@kvnvelasco.com>
+args:
+  - token:
+      short: t
+      long: token
+      help: API token override
+  - path:
+      short: p
+      long: path
+      help: Path you'd like to execute commands on
+subcommands:
+  - completions:
+      about: Generate shell autocompletions 
+      args:
+        - SHELL:
+            help: Name of the shell to generate configuration on 
+            possible_values: ["bash", "zsh"]
+  - init:
+      about: Initialize a jira cli environment in a directory
+      args:
+        - PATH:
+            index: 1
+            help: relative path to project directory
+  - fetch:
+      about: Fetch resources from  jira cloud
+      subcommands:
+        - projects:
+            index: 1
+            help: Get All Projects
+        - boards:
+            index: 2
+            help: Get all Boards
+        - issues:
+            index: 3
+            args:
+              - board-id:
+                  short: b
+                  long: board
+                  help: The id of the board to fetch
+                  takes_value: true
+  - list:
+      about: Fetch resources from  jira cloud
+      subcommands:
+          - projects:
+              index: 1
+              help: Get All Projects
+          - boards:
+              index: 2
+              help: Get all Boards
+          - issues:
+              index: 3
+              args:
+                - silent:
+                    short: s 
+                    help: For usage with scripts
+                - board-id:
+                    short: b
+                    long: board
+                    help: The id of the board to fetch
+                    takes_value: true

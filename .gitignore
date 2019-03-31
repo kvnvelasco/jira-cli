@@ -1,0 +1,6 @@
+/target
+**/*.rs.bk
+
+.jira 
+.idea 
+.vscode
