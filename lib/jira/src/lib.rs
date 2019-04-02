@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate reqwest;
-
+extern crate ansi_term;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Context {
   pub active_board: usize,

@@ -5,3 +5,4 @@ authors = ["Kevin Velasco <me@kvnvelasco.com>"]
 edition = "2018"
 
 [dependencies]
+git2 = "0.8"

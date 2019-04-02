@@ -1,4 +1,3 @@
-
 extern crate serde_yaml;
 
 extern crate fs;
@@ -7,9 +6,27 @@ mod utils;
 
 // use clap::App;
 use jira::client::Client;
-use jira::{Context};
+use jira::Context;
 
-use utils::io::{pick_from_list, read_line};
+use utils::io::{pick_from_list, read_line, Pickable};
+
+impl Pickable for jira::issue::Issue {
+    fn get_key(&self) -> String {
+        self.key.to_owned()
+    }
+}
+
+impl Pickable for jira::board::Board {
+    fn get_key(&self) -> String {
+        format!("{}", &self.id)
+    }
+}
+
+impl Pickable for jira::sprint::Sprint {
+    fn get_key(&self) -> String {
+        format!("{}", &self.id)
+    }
+}
 
 fn main() -> Result<(), Box<std::error::Error>> {
     // let app = App::new("workflow");
@@ -50,18 +67,24 @@ fn main() -> Result<(), Box<std::error::Error>> {
     };
 
     let jira_context_file = jira_workspace.read_file(&fs::Path::new("./context.yml"))?;
-    
-    let _context: Context = match serde_yaml::from_str(&jira_context_file) {
+
+    let context: Context = match serde_yaml::from_str(&jira_context_file) {
         Ok(context) => context,
         Err(_) => {
             println!("You don't have an active context set up yet");
             let boards = jira::board::get_boards(&client)?;
-            let board_index =
-                pick_from_list("Select one project from the list Above", &boards.values)?;
+            let board_index = pick_from_list(
+                "Select one project from the list Above",
+                &boards.values,
+                false,
+            )?;
             let board = &boards.values[board_index];
             let sprints = board.get_sprints(&client)?;
-            let sprint_index =
-                pick_from_list("Select one sprint from the list Above", &sprints.values)?;
+            let sprint_index = pick_from_list(
+                "Select one sprint from the list Above",
+                &sprints.values,
+                false,
+            )?;
             let sprint = &sprints.values[sprint_index];
 
             let context = Context {
@@ -76,6 +99,13 @@ fn main() -> Result<(), Box<std::error::Error>> {
         }
     };
 
+    let issues = jira::issue::get_issues_for_sprint(
+        &client,
+        &context.active_sprint,
+        &context.active_board,
+        0,
+    )?;
+
     // let boards = jira::board::get_boards(&client)?;
     // let board_index = pick_from_list("Select one from the list Above", &boards.values)?;
     // let board = &boards.values[board_index];
@@ -83,7 +113,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     // let sprint_index = pick_from_list("Select one from the list Above", &sprints.values)?;
     // let sprint = &sprints.values[sprint_index];
     // let issues = sprint.get_issues(&client)?;
-    // let issue_index = pick_from_list("Select one from the list Above", &issues.issues)?;
+    let issue_index = pick_from_list("Select one from the list Above", &issues.issues, true)?;
 
     // env_logger::init();
     // let yaml = load_yaml!("cli_args.yml");

@@ -16,6 +16,7 @@ impl Client {
       email: email.to_owned(),
     }
   }
+  
   fn base_url(&self) -> String {
     format!("https://{}", self.jira_host)
   }

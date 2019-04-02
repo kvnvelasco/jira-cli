@@ -28,7 +28,7 @@ impl Sprint {
 
 impl fmt::Display for Sprint {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", self.name)
+    write!(f, "{} ({})", self.name, self.state)
   }
 }
 
