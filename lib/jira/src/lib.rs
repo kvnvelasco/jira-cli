@@ -1,20 +1,17 @@
-#[macro_use]
-extern crate serde_derive;
-extern crate reqwest;
-extern crate ansi_term;
+use serde_derive::{Deserialize, Serialize};
+
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Context {
-  pub active_board: usize,
-  pub active_issue: Option<usize>,
-  pub active_sprint: usize,
+    pub active_board: usize,
+    pub active_issue: Option<String>,
+    pub active_sprint: usize,
 }
 
 pub mod board;
-pub mod issue;
-pub mod project;
-pub mod sprint;
 pub mod client;
 pub mod common;
+pub mod issue;
 mod network;
+pub mod project;
+pub mod sprint;
 mod urls;
-

@@ -5,48 +5,48 @@ use std::io::prelude::*;
 use std::io::{stdin, stdout};
 
 pub fn read_line(prompt: &str) -> String {
-  // send prompt
-  let mut data = String::new();
-  print!("{}: ", Colour::Green.paint(prompt));
-  stdout()
-    .flush()
-    .expect("i/o invariant: Unable to flush stdout");
+    // send prompt
+    let mut data = String::new();
+    print!("{}: ", Colour::Green.paint(prompt));
+    stdout()
+        .flush()
+        .expect("i/o invariant: Unable to flush stdout");
 
-  stdin()
-    .read_line(&mut data)
-    .expect("i/o invariant: Unable to read line");
+    stdin()
+        .read_line(&mut data)
+        .expect("i/o invariant: Unable to read line");
 
-  data.trim_end().to_owned()
+    data.trim_end().to_owned()
 }
 
 pub trait Pickable {
-  fn get_key(&self) -> String;
+    fn get_key(&self) -> String;
 }
 
 pub fn pick_from_list<T: Display + Pickable>(
-  prompt: &str,
-  // HACKY
-  items: &Vec<T>,
-  do_not_print_index: bool,
+    prompt: &str,
+    // HACKY
+    items: &[T],
+    do_not_print_index: bool,
 ) -> Result<usize, Box<std::error::Error>> {
-  for item in items {
-    if do_not_print_index {
-      println!("{}", item)
-    } else {
-      println!(
-        "{:<10} {}",
-        Colour::Blue.underline().paint(&item.get_key()),
-        item
-      )
+    for item in items {
+        if do_not_print_index {
+            println!("{}", item)
+        } else {
+            println!(
+                "{:<10} {}",
+                Colour::Blue.underline().paint(&item.get_key()),
+                item
+            )
+        }
     }
-  }
 
-  let data: usize = loop {
-    let string = read_line(&prompt);
-    if let Some(index) = items.iter().position(|f| f.get_key() == string) {
-      break index;
-    }
-  };
+    let data: usize = loop {
+        let string = read_line(&prompt);
+        if let Some(index) = items.iter().position(|f| f.get_key() == string) {
+            break index;
+        }
+    };
 
-  Ok(data)
+    Ok(data)
 }

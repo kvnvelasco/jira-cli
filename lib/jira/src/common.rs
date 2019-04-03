@@ -1,12 +1,14 @@
+use serde_derive::{Deserialize, Serialize};
+
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedResponse<T> {
-  pub values: Vec<T>,
+    pub values: Vec<T>,
 }
 
 pub trait Paginated {
-  fn get_distance_from_top(&self) -> usize;
-  fn get_number_of_pages(&self) -> usize;
+    fn get_distance_from_top(&self) -> usize;
+    fn get_number_of_pages(&self) -> usize;
 }
 
 // impl<T> Paginated for PaginatedResponse<T> {

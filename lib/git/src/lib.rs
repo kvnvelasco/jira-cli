@@ -1,7 +1,7 @@
-use std::error::Error;
-use std::result::Result as RustResult;
-use std::path::Path;
 use git2::Repository;
+use std::error::Error;
+use std::path::Path;
+use std::result::Result as RustResult;
 
 type Result<T> = RustResult<T, Box<Error>>;
 
@@ -10,6 +10,4 @@ pub fn get_repository_context(path_to_repo: &Path) -> Result<Repository> {
     Ok(Repository::discover(&path_to_repo)?)
 }
 
-pub fn create_branch(name: &str, repo: &Repository) {
-
-}
+pub fn create_branch(name: &str, repo: &Repository) {}
