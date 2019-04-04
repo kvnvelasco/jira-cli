@@ -25,20 +25,14 @@ pub trait Pickable {
 
 pub fn pick_from_list<T: Display + Pickable>(
     prompt: &str,
-    // HACKY
     items: &[T],
-    do_not_print_index: bool,
 ) -> Result<usize, Box<std::error::Error>> {
     for item in items {
-        if do_not_print_index {
-            println!("{}", item)
-        } else {
-            println!(
-                "{:<10} {}",
-                Colour::Blue.underline().paint(&item.get_key()),
-                item
-            )
-        }
+        println!(
+            "{:<10} {}",
+            Colour::Blue.underline().paint(&item.get_key()),
+            item
+        )
     }
 
     let data: usize = loop {
