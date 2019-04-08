@@ -17,9 +17,8 @@ fn main() -> Result<(), Box<std::error::Error>> {
     let working_directory = std::env::current_dir()?;
     let workspace =
         fs::Workspace::new(&working_directory).child_workspace(&String::from("./.workflow"));
-    workspace.create_directories()?;
 
-    let jira_workspace = workspace.child_workspace(&fs::PathBuf::from("./jira"));
+    workspace.create_directories()?;
 
     match app.subcommand() {
         ("fetch-context", Some(args)) => {
@@ -31,10 +30,24 @@ fn main() -> Result<(), Box<std::error::Error>> {
                     _ => panic!("Invalid source"),
                 },
             };
-            if JiraBacklog == args.source || JiraSprint == args.source {
-                get_context::run(&jira_workspace, args);
+
+            match args.source {
+                JiraBacklog | JiraSprint => {
+                    let jira_workspace = workspace.child_workspace(&fs::PathBuf::from("./jira"));
+                    get_context::run(&jira_workspace, args);
+                }
+                Git => {
+                    let git_workspace = fs::Workspace::new(&working_directory);
+                }
             };
         }
+        ("on", Some(args)) => match args.value_of("context") {
+            Some("jira") => {
+                let reference = args.value_of("REF").expect("A resource name is required");
+                git::create_branch_on_master(reference);
+            }
+            _ => {}
+        },
         _ => {}
     };
 

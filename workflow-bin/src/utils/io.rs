@@ -21,6 +21,7 @@ pub fn read_line(prompt: &str) -> String {
 
 pub trait Pickable {
     fn get_key(&self) -> String;
+    fn display_key(&self) -> String;
 }
 
 pub fn pick_from_list<T: Display + Pickable>(
@@ -30,14 +31,17 @@ pub fn pick_from_list<T: Display + Pickable>(
     for item in items {
         println!(
             "{:<10} {}",
-            Colour::Blue.underline().paint(&item.get_key()),
+            Colour::Blue.underline().paint(&item.display_key()),
             item
         )
     }
 
     let data: usize = loop {
         let string = read_line(&prompt);
-        if let Some(index) = items.iter().position(|f| f.get_key() == string) {
+        if let Some(index) = items
+            .iter()
+            .position(|f| f.get_key().to_ascii_lowercase() == string.to_ascii_lowercase())
+        {
             break index;
         }
     };

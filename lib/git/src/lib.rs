@@ -1,13 +1,40 @@
-use git2::Repository;
-use std::error::Error;
-use std::path::Path;
-use std::result::Result as RustResult;
+// For the moment these are simple calls to the command line;
+// Eventually we want to replace this with the git2 repository and
+// handle all the possible failure conditions. At the moment,
+// the existing git cli covers 90% of the cases required to fulfil the
+// use case of the workflow-cli tool
 
-type Result<T> = RustResult<T, Box<Error>>;
+// use git2::Repository;
+use std::process::{Command, Stdio};
 
-pub fn get_repository_context(path_to_repo: &Path) -> Result<Repository> {
-    // This crawls upwards until we find a repo
-    Ok(Repository::discover(&path_to_repo)?)
+pub fn create_branch_on_master(branch_name: &str) {
+  let branch_exists = Command::new("git")
+    .arg("rev-parse")
+    .arg("--verify")
+    .arg(branch_name)
+    .stdout(Stdio::piped())
+    .spawn()
+    .expect("Failed to execute command")
+    .wait_with_output()
+    .expect("Failed")
+    .status
+    .success();
+  //
+  if (branch_exists) {
+    checkout_branch(&branch_name)
+  };
 }
 
-pub fn create_branch(_name: &str, _repo: &Repository) {}
+pub fn checkout_branch(branch_name: &str) {
+  let branch_exists = Command::new("git")
+    .arg("checkout")
+    .arg(branch_name)
+    .stdout(Stdio::piped())
+    .spawn()
+    .expect("Failed to execute command")
+    .wait_with_output()
+    .expect("Failed")
+    .status
+    .success();
+}
+// fetch latest master and pull from upstream

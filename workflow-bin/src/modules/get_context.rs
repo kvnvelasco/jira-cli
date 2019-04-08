@@ -20,7 +20,14 @@ pub fn run(workspace: &Workspace, arguments: Arguments) {
   let context = Context::initialize(&workspace).unwrap();
   let mut issues: Vec<jira::issue::Issue> = Vec::new();
   match arguments.source {
-    ContextTypes::JiraBacklog => {}
+    ContextTypes::JiraBacklog => {
+      let issue_context =
+        jira::issue::get_issues_for_board(&client, context.active_board, 0)
+          .expect("Unable do get issues for sprint");
+      for issue in issue_context.issues {
+        issues.push(issue)
+      }
+    }
     ContextTypes::JiraSprint => {
       let issue_context =
         jira::issue::get_issues_for_sprint(&client, context.active_board, context.active_sprint, 0)

@@ -15,11 +15,13 @@ subcommands:
             help: The working context you want to switch to
             short: c
             long: ctx
-            possible_values: ["jira", "git"]
+            possible_values: ["jira"]
             takes_value: true
         - dry:
             help: Describe the operation without performing
             short: d
+        - REF:
+            help: Reference to a particular resource
   - fetch-context:
       help: Set the current working context
       args:

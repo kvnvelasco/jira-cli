@@ -109,20 +109,44 @@ impl Response {
         &mut self,
         client: &Client,
         board_id: usize,
-        sprint_id: usize,
+        sprint_id: Option<usize>,
     ) -> Result<(), Box<std::error::Error>> {
         while self.get_number_of_pages() > 0 {
-            let mut response = get_issues_for_sprint(
-                &client,
-                board_id,
-                sprint_id,
-                self.start_at + self.max_results,
-            )?;
-            self.start_at = response.start_at;
-            self.issues.append(&mut response.issues)
+            match sprint_id {
+                Some(sprint_id) => {
+                    let mut response = get_issues_for_sprint(
+                        &client,
+                        board_id,
+                        sprint_id,
+                        self.start_at + self.max_results,
+                    )?;
+                    self.start_at = response.start_at;
+                    self.issues.append(&mut response.issues)
+                }
+                None => {
+                    // get issues for board
+                }
+            }
         }
         Ok(())
     }
+}
+
+pub fn get_issues_for_board(
+    client: &Client,
+    board_id: usize,
+    offset: usize,
+) -> Result<Response, Box<std::error::Error>> {
+    let uri = format!("/rest/agile/1.0/board/{}/backlog", board_id);
+    let mut req = reqwest::Client::new().get(&client.create_url(&uri));
+    req = client.add_credentials_to_req(req).query(&[
+        ("startAt", format!("{}", offset).as_str()),
+        ("jql", "issuetype in (Bug, Sub-task)"),
+    ]);
+
+    let mut response: Response = send_request(req).json()?;
+    response.exhaust(&client, board_id, None)?;
+    Ok(response)
 }
 
 pub fn get_issues_for_sprint(
@@ -142,6 +166,6 @@ pub fn get_issues_for_sprint(
     ]);
 
     let mut response: Response = send_request(req).json()?;
-    response.exhaust(&client, board_id, sprint_id)?;
+    response.exhaust(&client, board_id, Some(sprint_id))?;
     Ok(response)
 }

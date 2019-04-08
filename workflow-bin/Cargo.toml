@@ -8,6 +8,7 @@ edition = "2018"
 dialoguer = "0.3.0"
 fs = { path = "../lib/fs"}
 jira = {path = "../lib/jira"}
+git = {path = "../lib/git"}
 clap = {version = "2.32.0", features = ["yaml"]}
 reqwest = "0.9.12"
 ansi_term = "0.11.0"
