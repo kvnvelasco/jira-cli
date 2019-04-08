@@ -108,14 +108,14 @@ impl Response {
     fn exhaust(
         &mut self,
         client: &Client,
-        sprint_id: usize,
         board_id: usize,
+        sprint_id: usize,
     ) -> Result<(), Box<std::error::Error>> {
         while self.get_number_of_pages() > 0 {
             let mut response = get_issues_for_sprint(
                 &client,
-                sprint_id,
                 board_id,
+                sprint_id,
                 self.start_at + self.max_results,
             )?;
             self.start_at = response.start_at;
@@ -127,8 +127,8 @@ impl Response {
 
 pub fn get_issues_for_sprint(
     client: &Client,
-    sprint_id: usize,
     board_id: usize,
+    sprint_id: usize,
     offset: usize,
 ) -> Result<Response, Box<std::error::Error>> {
     let uri = format!(
@@ -142,6 +142,6 @@ pub fn get_issues_for_sprint(
     ]);
 
     let mut response: Response = send_request(req).json()?;
-    response.exhaust(&client, sprint_id, board_id)?;
+    response.exhaust(&client, board_id, sprint_id)?;
     Ok(response)
 }

@@ -4,10 +4,10 @@ author: Kevin Velasco <me@kvnvelasco.com>
 
 subcommands:
   - completions:
-      about: Generate shell autocompletions 
+      about: Generate shell autocompletions
       args:
         - SHELL:
-            help: Name of the shell to generate configuration on 
+            help: Name of the shell to generate configuration on
             possible_values: ["bash", "zsh", "fish"]
   - on:
       args:
@@ -19,21 +19,22 @@ subcommands:
             takes_value: true
         - dry:
             help: Describe the operation without performing
-            short: d 
-  - get-context:
+            short: d
+  - fetch-context:
       help: Set the current working context
       args:
-        - from:
+        - source:
             help: Where to get the working context
             short: c
             long: ctx
-            possible_values: ["jira", "git"]
+            possible_values: ["jira-sprint", "jira-backlog", "git"]
             takes_value: true
+            required: true
   - list-contexts:
-      help: Display all the active contexts available 
+      help: Display all the active contexts available
   - clean-context:
-      help: Clean old contexts that have not been used in awhile 
+      help: Clean old contexts that have not been used in awhile
       args:
         - age:
             help: maximum age allowed for contexts in days
-            short: a 
+            short: a

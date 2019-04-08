@@ -10,4 +10,4 @@ pub fn get_repository_context(path_to_repo: &Path) -> Result<Repository> {
     Ok(Repository::discover(&path_to_repo)?)
 }
 
-pub fn create_branch(name: &str, repo: &Repository) {}
+pub fn create_branch(_name: &str, _repo: &Repository) {}

@@ -23,7 +23,7 @@ pub struct Sprint {
 
 impl Sprint {
     pub fn get_issues(&self, client: &Client) -> Result<IssueResponse, Box<Error>> {
-        get_issues_for_sprint(&client, self.id, self.originBoardId, 0)
+        get_issues_for_sprint(&client, self.originBoardId, self.id, 0)
     }
 }
 
