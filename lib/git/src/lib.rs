@@ -21,12 +21,12 @@ pub fn create_branch_on_master(branch_name: &str) {
     .success();
   //
   if (branch_exists) {
-    checkout_branch(&branch_name)
+    checkout_branch(&branch_name);
   };
 }
 
-pub fn checkout_branch(branch_name: &str) {
-  let branch_exists = Command::new("git")
+pub fn checkout_branch(branch_name: &str) -> bool {
+  Command::new("git")
     .arg("checkout")
     .arg(branch_name)
     .stdout(Stdio::piped())
@@ -35,6 +35,20 @@ pub fn checkout_branch(branch_name: &str) {
     .wait_with_output()
     .expect("Failed")
     .status
-    .success();
+    .success()
+}
+
+pub fn create_branch(branch_name: &str) -> bool {
+  Command::new("git")
+    .arg("checkout")
+    .arg("-b")
+    .arg(branch_name)
+    .stdout(Stdio::piped())
+    .spawn()
+    .expect("Failed to execute command")
+    .wait_with_output()
+    .expect("Failed")
+    .status
+    .success()
 }
 // fetch latest master and pull from upstream
