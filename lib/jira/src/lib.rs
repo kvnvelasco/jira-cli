@@ -2,9 +2,9 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Context {
-    pub active_board: usize,
+    pub active_board: Option<usize>,
     pub active_issue: Option<String>,
-    pub active_sprint: usize,
+    pub active_sprint: Option<usize>,
 }
 
 pub mod board;

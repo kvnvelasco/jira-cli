@@ -18,7 +18,7 @@ pub struct Sprint {
     pub endDate: Option<String>,
     pub completeDate: Option<String>,
     pub originBoardId: usize,
-    pub goal: String,
+    pub goal: Option<String>,
 }
 
 impl Sprint {

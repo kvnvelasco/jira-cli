@@ -26,6 +26,7 @@ pub struct Issue {
 #[serde(rename_all = "camelCase")]
 pub struct IssueFields {
     pub summary: String,
+    pub description: Option<String>,
     pub status: Status,
     pub issuetype: Type,
     pub assignee: Option<Asignee>,
@@ -66,14 +67,13 @@ impl fmt::Display for Issue {
         };
         write!(
             f,
-            "{:<10} {} {}\n{}",
-            Colour::Blue.underline().paint(&self.key),
+            "| ({}/{}) | {}",
             Colour::Green.dimmed().underline().paint(assignee),
             Colour::Red
                 .dimmed()
                 .underline()
                 .paint(&self.fields.status.name),
-            self.fields.summary
+            self.fields.summary,
         )
     }
 }
@@ -118,9 +118,8 @@ impl Response {
                         &client,
                         board_id,
                         sprint_id,
-                        self.start_at + self.max_results,
+                        self.issues.len()
                     )?;
-                    self.start_at = response.start_at;
                     self.issues.append(&mut response.issues)
                 }
                 None => {
@@ -140,8 +139,7 @@ pub fn get_issues_for_board(
     let uri = format!("/rest/agile/1.0/board/{}/backlog", board_id);
     let mut req = reqwest::Client::new().get(&client.create_url(&uri));
     req = client.add_credentials_to_req(req).query(&[
-        ("startAt", format!("{}", offset).as_str()),
-        ("jql", "issuetype in (Bug, Sub-task)"),
+        ("startAt", format!("{}", offset).as_str())
     ]);
 
     let mut response: Response = send_request(req).json()?;
@@ -161,11 +159,17 @@ pub fn get_issues_for_sprint(
     );
     let mut req = reqwest::Client::new().get(&client.create_url(&uri));
     req = client.add_credentials_to_req(req).query(&[
-        ("startAt", format!("{}", offset).as_str()),
-        ("jql", "issuetype in (Bug, Sub-task)"),
+        ("startAt", format!("{}", offset).as_str())
     ]);
 
     let mut response: Response = send_request(req).json()?;
     response.exhaust(&client, board_id, Some(sprint_id))?;
     Ok(response)
+}
+
+pub fn get_issue(client: &Client, key: &str) -> Option<Issue> {
+    let uri = format!("/rest/agile/1.0/issue/{}", key);
+    let mut req = reqwest::Client::new().get(&client.create_url(&uri));
+    req = client.add_credentials_to_req(req);
+    send_request(req).json().ok()
 }
