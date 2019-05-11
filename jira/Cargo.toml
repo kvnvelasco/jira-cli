@@ -1,11 +1,16 @@
 [package]
-name = "work"
+name = "jira-bin"
 version = "0.1.0"
 authors = ["Kevin Velasco <me@kvnvelasco.com>"]
 edition = "2018"
 
+[[bin]]
+name = "jira"
+path = "src/main.rs"
+
 [dependencies]
-dialoguer = "0.3.0"
+lazy_static = "1.3.0"
+skim = "0.6.6"
 fs = { path = "../lib/fs"}
 jira = {path = "../lib/jira"}
 git = {path = "../lib/git"}
@@ -19,3 +24,6 @@ url = "1.7.2"
 log = "0.4.6"
 env_logger = "0.6.1"
 Inflector = "0.11.4"
+git2 = "0.8.0"
+rand = "0.6"
+

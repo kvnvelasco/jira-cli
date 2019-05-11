@@ -1,8 +1,9 @@
 [workspace]
 
 members = [
-  "workflow-bin",
+  "jira",
   "lib/git",
   "lib/jira",
   "lib/fs"
 ]
+

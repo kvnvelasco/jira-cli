@@ -1,0 +1,27 @@
+name: jira
+version: "1.0.0"
+author: Kevin Velasco <me@kvnvelasco.com>
+
+subcommands:
+  - completions:
+      about: Generate shell autocompletions
+      args:
+        - SHELL:
+            help: Name of the shell to generate configuration on
+            possible_values: ["bash", "zsh", "fish"]
+  - set:
+      help: Set active resources 
+      subcommands: 
+      - board:
+          help: Select the active board 
+      - sprint:
+          help: Select a sprint as the active context 
+      - issue:
+          help: Select an active issue to work on
+  - checkout:
+      help: Checkout the currently active issue
+  # - list-issues:
+  #     help: Display all the active issues in the current context
+  # - current-issue:
+  #     help: Display the currently active issue context 
+        

@@ -10,25 +10,38 @@ pub struct Workspace {
 }
 
 impl Workspace {
-    pub fn new(path: &Path) -> Self {
+    pub fn new(path: &Path) -> Result<Self> {
         // create the directory;
-        Workspace {
+        let ws = Workspace {
             path: PathBuf::from(path),
+        };
+        ws.create_directories()?;
+        Ok(ws)
+    }
+
+    pub fn file_exists(&self, path: &Path) -> bool {
+        let buffer = self.get_path(&path);
+        if let false = buffer.is_file() { return false };
+        match fs::metadata(&buffer) {
+            Ok(_) => true,
+            Err(_) => false
         }
     }
 
-    pub fn create_directories(&self) -> Result<()> {
+    fn create_directories(&self) -> Result<()> {
         create_dir_all(&self.path)?;
         Ok(())
     }
 
-    pub fn child_workspace<T>(&self, path: &T) -> Workspace
+    pub fn child_workspace<T>(&self, path: &T) -> Result<Workspace>
     where
         T: std::convert::AsRef<std::path::Path>,
     {
         let mut new_buffer = PathBuf::from(&self.path);
         new_buffer.push(path);
-        Workspace::new(&new_buffer)
+        let ws = Workspace::new(&new_buffer)?;
+        ws.create_directories()?;
+        Ok(ws)
     }
 
     pub fn get_path(&self, path: &Path) -> PathBuf {
@@ -39,12 +52,14 @@ impl Workspace {
 
     pub fn write_file(&self, path: &Path, content: &str) -> Result<PathBuf> {
         let pathbuf = self.get_path(path);
+        self.create_file_if_not_exists(&pathbuf);
         write(&pathbuf, content)?;
         Ok(pathbuf)
     }
 
     pub fn read_file(&self, path: &Path) -> Result<String> {
-        let buffer = self.get_path(path);
+        self.create_file_if_not_exists(&path);
+        let buffer = self.get_path(&path);
         Ok(read_to_string(&buffer)?)
     }
 
@@ -60,24 +75,11 @@ impl Workspace {
         }
     }
 
-    pub fn create_file(&self, path: &Path) {
+    fn create_file_if_not_exists(&self, path: &Path) {
         let buffer = self.get_path(&path);
         let _file_name = buffer.file_name().expect("File path is not valid");
-        match fs::metadata(&buffer) {
-            Ok(_) => {}
-            Err(_) => {
-                fs::File::create(&buffer).expect("Unable to create file");
-                // println!(
-                //   "{} {}",
-                //   Colour::Blue.paint("Created File"),
-                //   path
-                //     .canonicalize()
-                //     .expect("Unable to decode Path")
-                //     .to_str()
-                //     .expect("Path is invalid unicode")
-                // );
-                ()
-            }
+        if let false = self.file_exists(&path) {
+            fs::File::create(&buffer).expect("Unable to create file");
         };
     }
 }
