@@ -1,4 +1,4 @@
-use git2::{self, Branch, BranchType, Error};
+use git2::{self, BranchType};
 use std::error::Error as StdErr;
 
 mod errors;
@@ -26,12 +26,12 @@ impl Repository {
     }
 
     // It's entirely possible that the current head does not point to a branch
-    pub fn current_branch_name(&self) -> Option<String> {
-        let repo = &self.repo;
-        let head = repo.head().unwrap();
-
-        Some(head.name()?.to_string())
-    }
+    //    pub fn current_branch_name(&self) -> Option<String> {
+    //        let repo = &self.repo;
+    //        let head = repo.head().unwrap();
+    //
+    //        Some(head.name()?.to_string())
+    //    }
 
     fn current_branch(&self) -> Result<git2::Branch, errors::Errors> {
         if let Some(branch_name) = &self.ref_spec {
@@ -52,12 +52,12 @@ impl Repository {
         self.repo.find_branch(&branch, BranchType::Local).is_ok()
     }
 
-    pub fn set_branch(&mut self, branch: &str) -> &mut Self {
+    pub fn set_branch(&mut self, branch: &str) -> Result<&mut Self, errors::Errors> {
         if self.branch_exists(&branch) {
             self.ref_spec = Some(branch.to_owned());
-            self.checkout();
+            self.checkout()?;
         };
-        (self)
+        Ok(self)
     }
 
     pub fn create_branch(&mut self, branch: &str) -> Result<&mut Self, StandardError> {

@@ -9,8 +9,7 @@ impl std::fmt::Display for Errors {
         match self {
             Errors::InvalidRepo => write!(f, "Git Error: Directory is not a valid git repository"),
             Errors::BranchNotSet => write!(f, "Git error: Active branch is not set"),
-        };
-        Ok(())
+        }
     }
 }
 

@@ -11,9 +11,7 @@ use inflector::cases::{kebabcase::to_kebab_case, screamingsnakecase::to_screamin
 
 use clap::{self, load_yaml, App};
 use fs;
-use jira::{board, issue, sprint};
-use jira_bindings::{initialize_jira_client, initialize_jira_context, save_jira_context};
-use utils::io::{confirm, pick_from_list};
+use utils::io::{confirm};
 
 const WORKDIR: &'static str = "./.jira";
 
@@ -53,7 +51,7 @@ fn start() -> Result<(), Box<std::error::Error>> {
 
                 if repo.branch_exists(&key) {
                     if confirm("Branch already exists, checkout") {
-                        repo.set_branch(&key);
+                        repo.set_branch(&key)?;
                         println!("Checked out branch {}", key);
                     }
                 } else {
@@ -61,9 +59,11 @@ fn start() -> Result<(), Box<std::error::Error>> {
                         //                        println!("Creating branch {} on {}", key, repo.ref_spec);
                         //                        println!("Fetching {}...", repo.ref_spec);
                         //                        repo.fetch_branch(&repo.ref_spec.clone());
-                        repo.create_branch(&key);
-                        println!("Created branch {}", &key);
-                        if confirm("Checkout branch") { repo.set_branch(&key); }
+                        if let Ok(_) = repo.create_branch(&key) {
+                            println!("Created branch {}", &key);
+                            if confirm("Checkout branch") { repo.set_branch(&key)?; }
+                        };
+
                     }
                 }
             }

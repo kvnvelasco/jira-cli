@@ -31,6 +31,7 @@ pub fn start(arguments: &ArgMatches, workspace: &Workspace) -> Result<(), Box<st
             let issue = &issues.issues[selected];
             context.active_issue = Some(issue.id.to_owned());
             save_jira_context(&context, &workspace)?;
+
         }
         ("sprint", Some(_)) => {
             let client = initialize_jira_client(&workspace)?;
