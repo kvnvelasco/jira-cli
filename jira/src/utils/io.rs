@@ -34,11 +34,13 @@ pub trait Pickable {
 }
 
 pub fn pick_from_list<T: Display + Pickable>(items: &[T]) -> Result<usize, Box<std::error::Error>> {
-    let mut data = String::new();
-
-    for item in items {
-        data.push_str(&format!("{} {}\n", item.get_key(), item))
-    }
+    let data = {
+        let mut temp = String::new();
+        for item in items {
+            temp.push_str(&format!("{} {}\n", item.get_key(), item))
+        }
+        temp
+    };
 
     let selected_items = Skim::run_with(&SKIM_OPTIONS, Some(Box::new(Cursor::new(data))))
         .map(|out| out.selected_items)
@@ -51,8 +53,5 @@ pub fn pick_from_list<T: Display + Pickable>(items: &[T]) -> Result<usize, Box<s
 }
 
 pub fn confirm(prompt: &str) -> bool {
-    let mutated_prompt = format!("{} (y/N)?", prompt);
-    let response = read_line(&mutated_prompt);
-
-    response == "y"
+    read_line(&format!("{} (y/N)?", prompt)) == "y"
 }
