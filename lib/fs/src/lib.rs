@@ -50,6 +50,10 @@ impl Workspace {
         pathbuf
     }
 
+    pub fn workdir_path(&self) -> PathBuf {
+        self.path.to_owned()
+    }
+
     pub fn write_file(&self, path: &Path, content: &str) -> Result<PathBuf> {
         let pathbuf = self.get_path(path);
         self.create_file_if_not_exists(&pathbuf);

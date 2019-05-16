@@ -1,10 +1,10 @@
 extern crate ansi_term;
 use ansi_term::Colour;
+use simple_error::SimpleError;
 use skim::{Skim, SkimOptions, SkimOptionsBuilder};
 use std::fmt::Display;
 use std::io::prelude::*;
 use std::io::{stdin, stdout, Cursor};
-
 lazy_static! {
     static ref SKIM_OPTIONS: SkimOptions<'static> = SkimOptionsBuilder::default()
         .height(Some("100%"))
@@ -46,7 +46,7 @@ pub fn pick_from_list<T: Display + Pickable>(items: &[T]) -> Result<usize, Box<s
 
     Ok(selected_items
         .first()
-        .expect("No index selected")
+        .ok_or(SimpleError::new("Unable to select an item."))?
         .get_index())
 }
 
