@@ -1,3 +1,4 @@
+use crate::git_bindings::errors::Errors;
 use git2::{self, BranchType};
 use std::error::Error as StdErr;
 
@@ -81,6 +82,30 @@ impl Repository {
                 .unwrap();
             self.repo.checkout_head(None).unwrap();
         }
+        {
+            // We want to make sure that the index is always set to the head.
+            self.reset_index();
+        }
+        Ok(self)
+    }
+
+    fn stash_index(&mut self) -> Result<&mut Self, errors::Errors> {
+        let repo = self.repo.stash_save()
+    }
+
+    fn reset_index(&mut self) -> Result<&mut Self, errors::Errors> {
+        {
+            let head = self
+                .repo
+                .head()
+                .or(Err(Errors::InvalidRepo))?
+                .peel(git2::ObjectType::Any)
+                .or(Err(Errors::InvalidRepo))?;
+            self.repo
+                .reset(&head, git2::ResetType::Hard, None)
+                .or(Err(Errors::InvalidRepo))?;
+        }
+
         Ok(self)
     }
 }

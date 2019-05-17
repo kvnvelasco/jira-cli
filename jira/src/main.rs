@@ -59,20 +59,18 @@ fn start() -> Result<(), Box<std::error::Error>> {
                         to_kebab_case(&issue.fields.summary)
                     )
                 };
-
                 repo.set_remote("origin");
-
                 if repo.branch_exists(&key) {
-                    if confirm("Branch already exists, checkout") {
+                    if confirm("Checkout branch. This will reset your working tree") {
                         repo.set_branch(&key)?;
                         println!("Checked out branch {}", key);
-                    }
+                    };
                 } else if confirm(&format!("Branch {} does not exist, create", key)) {
                     if repo.create_branch(&key).is_ok() {
                         println!("Created branch {}", &key);
-                        if confirm("Checkout branch") {
+                        if confirm("Checkout branch. This will reset your working tree") {
                             repo.set_branch(&key)?;
-                        }
+                        };
                     };
                 }
             }
