@@ -14,7 +14,8 @@ pub fn fetch_and_cache_jira_issues(
     board_id: usize,
     sprint_id: usize,
 ) -> Result<()> {
-    let issues = jira::issue::get_issues_for_sprint(&client, board_id, sprint_id, 0)?.issues;
-    save_issues_to_cache(&workspace, &issues);
+    save_issues_to_cache(&workspace, &{
+        jira::issue::get_issues_for_sprint(&client, board_id, sprint_id, 0)?.issues
+    });
     Ok(())
 }
