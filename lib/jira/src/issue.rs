@@ -28,8 +28,10 @@ pub struct IssueFields {
     pub summary: String,
     pub description: Option<String>,
     pub status: Status,
+    pub updated: String,
     pub issuetype: Type,
     pub assignee: Option<Asignee>,
+    pub progress: Progress,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,6 +49,13 @@ pub struct StatusCategory {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Type {
     name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Progress {
+    progress: Option<usize>,
+    total: Option<usize>,
+    percent: Option<usize>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -114,12 +123,8 @@ impl Response {
         while self.get_number_of_pages() > 0 {
             match sprint_id {
                 Some(sprint_id) => {
-                    let mut response = get_issues_for_sprint(
-                        &client,
-                        board_id,
-                        sprint_id,
-                        self.issues.len()
-                    )?;
+                    let mut response =
+                        get_issues_for_sprint(&client, board_id, sprint_id, self.issues.len())?;
                     self.issues.append(&mut response.issues)
                 }
                 None => {
@@ -131,6 +136,15 @@ impl Response {
     }
 }
 
+impl Issue {
+    pub fn from_yml(yaml_string: String) -> Option<Issue> {
+        serde_yaml::from_str(&yaml_string).ok()
+    }
+    pub fn to_yml(&self) -> Option<String> {
+        serde_yaml::to_string(&self).ok()
+    }
+}
+
 pub fn get_issues_for_board(
     client: &Client,
     board_id: usize,
@@ -138,9 +152,9 @@ pub fn get_issues_for_board(
 ) -> Result<Response, Box<std::error::Error>> {
     let uri = format!("/rest/agile/1.0/board/{}/backlog", board_id);
     let mut req = reqwest::Client::new().get(&client.create_url(&uri));
-    req = client.add_credentials_to_req(req).query(&[
-        ("startAt", format!("{}", offset).as_str())
-    ]);
+    req = client
+        .add_credentials_to_req(req)
+        .query(&[("startAt", format!("{}", offset).as_str())]);
 
     let mut response: Response = send_request(req).json()?;
     response.exhaust(&client, board_id, None)?;
@@ -158,9 +172,9 @@ pub fn get_issues_for_sprint(
         board_id, sprint_id
     );
     let mut req = reqwest::Client::new().get(&client.create_url(&uri));
-    req = client.add_credentials_to_req(req).query(&[
-        ("startAt", format!("{}", offset).as_str())
-    ]);
+    req = client
+        .add_credentials_to_req(req)
+        .query(&[("startAt", format!("{}", offset).as_str())]);
 
     let mut response: Response = send_request(req).json()?;
     response.exhaust(&client, board_id, Some(sprint_id))?;
