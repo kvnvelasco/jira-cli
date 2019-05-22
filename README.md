@@ -30,4 +30,6 @@ Set the current issue context.
 
 `jira checkout`
 
+![](./docs/checkout.gif)
+
 Take the current issue and kebab case the summary. Check out the branch and reset the index.
