@@ -30,7 +30,7 @@ pub fn start(arguments: &ArgMatches, workspace: &Workspace) -> Result<()> {
                 RecommendedAction::FetchSprint { .. } => {
                     return Err(Box::new(Error::SprintContextUnavailable));
                 }
-                RecommendedAction::SetIssue => {} // Do nothing, we're ok here
+                RecommendedAction::SetIssue | RecommendedAction::FetchAny {..} => {} // Do nothing, we're ok here
                 _ => {
                     return Err(Box::new(Error::ContextUnparseable));
                 }
