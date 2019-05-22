@@ -40,7 +40,6 @@ impl Workspace {
             path.push(dir_name);
             if path.is_dir() {
                 let workspace = Workspace::new(&path.clone()).expect("Unable to open workspace");
-                println!("{:?}", workspace.path);
                 return Some(workspace);
             }
             path.pop();
