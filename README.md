@@ -3,6 +3,14 @@
 Tiny helper cli tool that allows you to select a sprint, board, and issue to work on, be able to switch between
 jira issues, and checkout branches that are named after said issues.
 
+## Download a Binary
+* MacOS - [jira](https://github.com/kvnvelasco/jira-cli/releases/download/v0.1.0/darwin-x86-jira)
+
+## Compiling it yourself
+
+1. Install cargo and rustc from rustup `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+2. In the project directory run `cargo install --path ./jira`
+
 ## Usage 
 
 `jira init`
@@ -33,3 +41,5 @@ Set the current issue context.
 ![](./docs/checkout.gif)
 
 Take the current issue and kebab case the summary. Check out the branch and reset the index.
+
+
