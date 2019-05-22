@@ -79,6 +79,6 @@ fn set_issue(workspace: &Workspace, context: &mut Context) -> Result<()> {
     let issues = load_issues_from_cache(&workspace)?;
     let selected = pick_from_list(&issues)?;
     let issue = &issues[selected];
-    context.active_issue = Some(issue.id.to_owned());
+    context.active_issue = Some(issue.key.to_owned());
     Ok(())
 }

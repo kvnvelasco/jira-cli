@@ -89,9 +89,9 @@ impl Repository {
         Ok(self)
     }
 
-    fn stash_index(&mut self) -> Result<&mut Self, errors::Errors> {
-        let repo = self.repo.stash_save()
-    }
+    //    fn stash_index(&mut self) -> Result<&mut Self, errors::Errors> {
+    //        let repo = self.repo.stash_save()
+    //    }
 
     fn reset_index(&mut self) -> Result<&mut Self, errors::Errors> {
         {

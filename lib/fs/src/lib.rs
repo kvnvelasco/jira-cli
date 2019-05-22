@@ -21,11 +21,31 @@ impl Workspace {
 
     pub fn file_exists(&self, path: &Path) -> bool {
         let buffer = self.get_path(&path);
-        if let false = buffer.is_file() { return false };
+        if let false = buffer.is_file() {
+            return false;
+        };
         match fs::metadata(&buffer) {
             Ok(_) => true,
-            Err(_) => false
+            Err(_) => false,
         }
+    }
+
+    // crawls up the file tree until / checking if a dir_name exists if it does,
+    // return a new workspace pointed at that directory
+    pub fn discover(dir_name: &str) -> Option<Workspace> {
+        let mut path = std::env::current_dir().expect("Unable to discover workspace");
+        // push this in the mean time so we pop into the current directory
+        path.push(dir_name);
+        while path.pop() {
+            path.push(dir_name);
+            if path.is_dir() {
+                let workspace = Workspace::new(&path.clone()).expect("Unable to open workspace");
+                println!("{:?}", workspace.path);
+                return Some(workspace);
+            }
+            path.pop();
+        }
+        None
     }
 
     fn create_directories(&self) -> Result<()> {
@@ -85,5 +105,22 @@ impl Workspace {
         if let false = self.file_exists(&path) {
             fs::File::create(&buffer).expect("Unable to create file");
         };
+    }
+
+    pub fn destroy(&self) {
+        std::process::Command::new("rm")
+            .args(&[
+                "-rf",
+                &self
+                    .path
+                    .to_str()
+                    .expect("No such path exists. Cannot teardown workspace"),
+            ])
+            .output();
+    }
+
+    pub fn reset(&self) {
+        self.destroy();
+        self.create_directories();
     }
 }

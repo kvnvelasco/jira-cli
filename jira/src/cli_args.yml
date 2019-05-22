@@ -8,6 +8,8 @@ subcommands:
         - SHELL:
             help: Name of the shell to generate configuration on
             possible_values: ["bash", "zsh", "fish"]
+  - init:
+      help: Initialize a jira context in the current directory.
   - set:
       help: Set active resources
       subcommands:

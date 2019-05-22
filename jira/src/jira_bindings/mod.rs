@@ -41,7 +41,7 @@ pub fn initialize_jira_client(jira_workspace: &Workspace) -> Result<Client, Box<
         match serde_yaml::from_str::<Client>(&jira_session_file) {
             Ok(client) => client,
             Err(_) => {
-                println!("You don't have a jira session set up yet");
+                println!("Setting up jira session file");
                 let domain =
                     read_line("Provide your Atlassian domain (e.g: company.atlassian.net)");
                 let email = read_line("Enter your email");
@@ -56,6 +56,11 @@ pub fn initialize_jira_client(jira_workspace: &Workspace) -> Result<Client, Box<
 
                 save_jira_client(&client, &jira_workspace).expect("Unable to save session file");
 
+                println!(
+                    "Jira session saved. If this is your\
+                     first time creating a jira cli session, you \
+                     may want to add .jira to your global gitignore"
+                );
                 client
             }
         }

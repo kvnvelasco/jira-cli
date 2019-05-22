@@ -43,8 +43,7 @@ pub fn validate(context: &Context) -> RecommendedAction {
             sprint_id: active_sprint.to_owned(),
         },
         Context {
-            active_sprint: Some(active_sprint),
-            active_board: Some(active_board),
+            active_issue: None,
             issues_fetched: true,
             ..
         } => RecommendedAction::SetIssue,
