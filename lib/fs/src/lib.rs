@@ -34,15 +34,15 @@ impl Workspace {
     // return a new workspace pointed at that directory
     pub fn discover(dir_name: &str) -> Option<Workspace> {
         let mut path = std::env::current_dir().expect("Unable to discover workspace");
-        // push this in the mean time so we pop into the current directory
-        path.push(dir_name);
-        while path.pop() {
+        loop {
             path.push(dir_name);
             if path.is_dir() {
                 let workspace = Workspace::new(&path.clone()).expect("Unable to open workspace");
                 return Some(workspace);
             }
-            path.pop();
+            if !path.pop(){
+                break;
+            }
         }
         None
     }
